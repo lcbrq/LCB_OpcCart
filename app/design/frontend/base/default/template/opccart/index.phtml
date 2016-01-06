@@ -1,0 +1,87 @@
+<div class="cart-container">
+
+    <?php
+    $i = 0;
+    foreach ($this->getItems() as $item): $i++
+        ?>
+        <div class="product-line row row-full-height col-full-height">
+            <div class="line-image col-sm-4 col-sm-height">
+                <a href="#">
+                    <img src="<?php echo $this->helper('catalog/image')->init($item->getProduct(), 'small_image')->resize(500); ?>" alt="Product Title" />
+                </a>
+            </div>
+            <div class="line-info col-sm-8 col-sm-height">
+                <div class="row">
+                    <div class="line-title col-md-6">
+                        <a href="<?php echo $item->getProduct()->getProductUrl(); ?>"><?php echo $item->getName(); ?></a>
+                    </div>
+                    <div class="line-qty col-xs-6 col-md-3">
+                        <form class="line-update form-inline">
+                            <div class="form-group">
+                                <label for="qty_productID"><?php echo $this->__("Qty"); ?></label>
+                                <select class="form-control" id="qty_productID" onchange="updateQty(this, <?php echo $item->getId(); ?>)">
+                                    <?php foreach(range(0,10) as $qty): ?>
+                                    <option <?php if($qty==$item->getQty()) { echo 'selected="selected"' ;} ?>><?php echo $qty; ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="line-price col-xs-6 col-md-3">
+                        <span class="price"><?php echo number_format($item->getRowTotalInclTax(), 2); ?><small>&nbsp;<?php echo Mage::app()->getStore()->getBaseCurrencyCode(); ?></small></span>
+                    </div>
+                </div>
+                <?php if ($i == count($this->getItems())): ?>
+
+                     <?php echo $this->getChildhtml('coupon'); ?>
+                
+                <?php endif; ?>
+            </div>
+        </div><!-- /.product-line -->
+    <?php endforeach; ?>
+
+
+    <?php
+    $quote = Mage::getModel('checkout/session')->getQuote();
+    $quoteData = $quote->getData();
+    $grandTotal = $quoteData['grand_total'];
+    
+    $address = Mage::helper('checkout')->getQuote()->getShippingAddress();
+    if ($address && $address->getData()) {
+        $data = $address->getData();
+        if (isset($data['shipping_incl_tax'])) {
+            $shippingCost = $data['shipping_incl_tax'];
+        }
+    }
+    
+    if(!$shippingCost){
+    $shippingCost = Mage::getStoreConfig('carriers/flatrate/price') * $quoteData['items_qty'];
+    }
+    ?>
+    <div class="total-line row">
+        <div class="col-sm-6 line-title">
+            <?php echo $this->__("Shipping"); ?>
+        </div>
+        <div class="line-price col-sm-6">
+            <span class="price"><?php echo $shippingCost; ?> <small><?php echo Mage::app()->getStore()->getBaseCurrencyCode(); ?></small></span>
+        </div>
+        <div class="col-sm-6 line-title">
+            <?php echo $this->__("Total price"); ?><small>&nbsp;inkl. MwSt</small>
+        </div>
+        <div class="line-price col-sm-6">
+            <span class="price"><?php echo number_format($grandTotal, 2); ?> <small><?php echo Mage::app()->getStore()->getBaseCurrencyCode(); ?></small></span>
+        </div>
+    </div>
+</div><!-- /.cart-container -->
+
+<script>
+    
+    function updateQty(e,id){
+        qty = e.value;
+        controller = '<?php echo $this->getUrl('opccart/index/update'); ?>';
+        url = controller + 'id/'+id+'/qty/'+qty;
+        location.href= url;
+    }
+    
+    </script>
+    

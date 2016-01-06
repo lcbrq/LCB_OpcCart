@@ -1,0 +1,3 @@
+app/code/local/LCB/OpcCart                         app/code/local/LCB/OpcCart
+app/etc/modules/LCB_OpcCart.xml                    app/etc/modules/LCB_OpcCart.xml
+app/design/frontend/base/default/template/opccart/ app/design/frontend/base/default/template/opccart/
