@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<layout>
+    
+    <opc_index_index translate="label">
+        <reference name="es.checkout.container">        	
+            <block type="opccart/index" name="opccart_index" as="opccart" template="opccart/index.phtml"/>			
+        </reference>
+    </opc_index_index>	
+    
+</layout>
